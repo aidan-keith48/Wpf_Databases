@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -15,8 +17,8 @@ namespace Wpf_Databases.DataController
     {
         SqlConnection conn;
         SqlCommand cmd;
-        public dbController() 
-        { 
+        public dbController()
+        {
             //Database connection
             conn = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\lab_services_student\\source\\repos\\Wpf_Databases\\Wpf_Databases\\Storage\\reviewDatabase.mdf;Integrated Security=True");
         }
@@ -43,37 +45,66 @@ namespace Wpf_Databases.DataController
             }
 
             conn.Close();
+
         }
 
-        public string displayData()
+        public ObservableCollection<int> GetUser()
         {
-            conn.Open();
+            ObservableCollection<int> userIds = new ObservableCollection<int>();
 
-            string query = "SELECT * FROM reviews";
-            StringBuilder result = new StringBuilder();
+            string query = "SELECT id FROM reviews";
 
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
+                conn.Open();
+
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        // Assuming your table has columns named "Name," "Email," "Product," and "Comment"
-                        string name = reader["Name"].ToString();
-                        string email = reader["Email"].ToString();
-                        string product = reader["Product"].ToString();
-                        string comment = reader["Comment"].ToString();
-
-                        // Format the data and append it to the result
-                        result.AppendLine($"Name: {name}, Email: {email}, Product: {product}, Comment: {comment}");
+                        int userId = reader.GetInt32(0); // Assuming the ID is in the first column (index 0)
+                        userIds.Add(userId);
                     }
                 }
+
+                conn.Close();
             }
 
-            conn.Close();
+            return userIds;
+        }
 
-            // Convert the StringBuilder to a string
-            return result.ToString();
+
+
+        public DataTable displayData(int id)
+        {
+            conn.Open();
+
+            string query = "SELECT * FROM reviews WHERE id = @ID";
+            SqlCommand cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@ID", id); // Add the @ID parameter
+
+            SqlDataAdapter sba = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable("Reviews");
+            sba.Fill(dt);
+
+            conn.Close();
+            return dt;
+        }
+
+        public DataTable displayAll()
+        {
+            conn.Open();
+
+            string query = "SELECT * FROM reviews";
+            SqlCommand cmd = new SqlCommand(query, conn);
+            //cmd.Parameters.AddWithValue("@ID", id); // Add the @ID parameter
+
+            SqlDataAdapter sba = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable("Reviews");
+            sba.Fill(dt);
+
+            conn.Close();
+            return dt;
         }
 
     }

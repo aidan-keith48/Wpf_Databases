@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,14 +28,21 @@ namespace Wpf_Databases
         public MainWindow()
         {
             InitializeComponent();
+            //List<int> userIds = db.GetUser();
+            ObservableCollection<int> userIds = db.GetUser();
+            //var user = db.getUser();
+            selectUserCombo.ItemsSource = userIds;
             //dataGrid.ItemsSource = Reviews;
         }
 
         private void viewDataBtn_Click(object sender, RoutedEventArgs e)
         {
             Reviews review = new Reviews();
+            int id = Convert.ToInt32(selectUserCombo.SelectedValue);
+            dbController db = new dbController();
 
-            displayTxt.Text = db.displayData();
+            DataTable dt = db.displayData(id);
+            dataGrid.ItemsSource = dt.DefaultView;
         }
 
         private void sendBtn_Click(object sender, RoutedEventArgs e)
@@ -51,6 +60,16 @@ namespace Wpf_Databases
             db.addReview(review);
             MessageBox.Show("Values Added");
 
+        }
+
+        private void selectAll_Click(object sender, RoutedEventArgs e)
+        {
+            Reviews review = new Reviews();
+           // int id = Convert.ToInt32(selectUserCombo.SelectedValue);
+            dbController db = new dbController();
+
+            DataTable dt = db.displayAll();
+            dataGrid.ItemsSource = dt.DefaultView;
         }
     }
 }
