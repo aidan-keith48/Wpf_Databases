@@ -24,6 +24,8 @@ namespace Wpf_Databases
     /// </summary>
     public partial class MainWindow : Window
     {
+        private List<User> userList = new List<User>();
+
         dbController db = new dbController();
         public MainWindow()
         {
@@ -35,13 +37,19 @@ namespace Wpf_Databases
             //dataGrid.ItemsSource = Reviews;
         }
 
+        public MainWindow(List<User> userList)
+        {
+            InitializeComponent();
+            this.userList = userList;
+        }
+
         private void viewDataBtn_Click(object sender, RoutedEventArgs e)
         {
             Reviews review = new Reviews();
-            int id = Convert.ToInt32(selectUserCombo.SelectedValue);
+            string user = (string)selectUserCombo.SelectedValue;
             dbController db = new dbController();
 
-            DataTable dt = db.displayData(id);
+            DataTable dt = db.displayData(user);
             dataGrid.ItemsSource = dt.DefaultView;
         }
 
@@ -57,7 +65,7 @@ namespace Wpf_Databases
 
             review = new Reviews(name, email, product, comment);
 
-            db.addReview(review);
+            db.addReview(review, userList);
             MessageBox.Show("Values Added");
 
         }
