@@ -97,30 +97,29 @@ namespace Wpf_Databases.DataController
             return username;
         }
 
-        public ObservableCollection<int> GetUser()
+        public ObservableCollection<string> GetUser()
         {
-            ObservableCollection<int> userIds = new ObservableCollection<int>();
+            ObservableCollection<string> products = new ObservableCollection<string>();
 
-            string query = "SELECT Id FROM [reviews1]";
-
-            using (SqlCommand cmd = new SqlCommand(query, conn))
-            {
+           
                 conn.Open();
 
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                string query = "SELECT product FROM reviews1";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    while (reader.Read())
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        int userId = reader.GetInt32(0); // Assuming the ID is in the first column (index 0)
-                        userIds.Add(userId);
+                        while (reader.Read())
+                        {
+                            string product = reader.GetString(0); // Assuming the 'product' column is in the first column (index 0)
+                            products.Add(product);
+                        }
                     }
                 }
-
-                conn.Close();
-            }
-
-            return userIds;
+            return products;
         }
+
 
         public void addUserInfo(string user)
         {
@@ -146,10 +145,10 @@ namespace Wpf_Databases.DataController
 
 
 
-        public DataTable displayData(string user, List<User> userList)
+        public DataTable displayData(List<User> userList)
         {
             conn.Open();
-            user = getUserFromList(userList);
+            string user = getUserFromList(userList);
 
             string query = "SELECT * FROM reviews1 WHERE username = @User";
             SqlCommand cmd = new SqlCommand(query, conn);

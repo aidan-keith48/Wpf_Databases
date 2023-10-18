@@ -31,7 +31,7 @@ namespace Wpf_Databases
         {
             InitializeComponent();
             //List<int> userIds = db.GetUser();
-            ObservableCollection<int> userIds = db.GetUser();
+            ObservableCollection<string> userIds = db.GetUser();
             //var user = db.getUser();
             selectUserCombo.ItemsSource = userIds;
             //dataGrid.ItemsSource = Reviews;
@@ -41,15 +41,18 @@ namespace Wpf_Databases
         {
             InitializeComponent();
             this.userList = userList;
+            ObservableCollection<string> userIds = db.GetUser();
+            //var user = db.getUser();
+            selectUserCombo.ItemsSource = userIds;
         }
 
         private void viewDataBtn_Click(object sender, RoutedEventArgs e)
         {
             Reviews review = new Reviews();
-            string user = (string)selectUserCombo.SelectedValue;
+            //string user = (string)selectUserCombo.SelectedValue;
             dbController db = new dbController();
 
-            DataTable dt = db.displayData(user);
+            DataTable dt = db.displayData(userList);
             dataGrid.ItemsSource = dt.DefaultView;
         }
 

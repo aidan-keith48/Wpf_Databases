@@ -126,7 +126,7 @@
             Margin="10,26,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Content="Select User:" />
+            Content="Select product:" />
         <Button
             x:Name="viewDataBtn"
             Grid.Row="2"
